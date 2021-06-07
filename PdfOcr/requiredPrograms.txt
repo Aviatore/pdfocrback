@@ -1,0 +1,4 @@
+libgdiplus
+ocrmypdf
+tesseract-ocr
+tesseract-ocr-pol
