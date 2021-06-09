@@ -2,6 +2,6 @@ namespace PdfOcr.Services
 {
     public interface IOcr
     {
-        void OcrPdfAsync(string fullPath);
+        void OcrPdfAsync(string inputFullPath, string outputFullPath, string outputFullUrl, string connectionId);
     }
 }

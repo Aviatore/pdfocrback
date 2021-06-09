@@ -1,10 +1,13 @@
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using PdfOcr.Extensions;
 using PdfOcr.HelperMethods;
 using PdfOcr.Models;
 using PdfOcr.Services;
+using PdfOcr.SignalR;
 
 namespace PdfOcr.Controllers
 {
@@ -20,34 +23,46 @@ namespace PdfOcr.Controllers
         }
         
         [HttpPost("GetFile")]
-        public IActionResult Index()
+        public IActionResult Index(string connectionId)
         {
             RequestResponse requestResponse = new RequestResponse()
             {
                 Detail = "Something went wrong",
                 Status = 500
             };
-            string dirPath = "InputFiles";
-            var fullPath = Path.Combine(dirPath, "input.pdf");
-            
-            IFormFile file = Request.Form.Files.Count > 0 ? Request.Form.Files[0] : null;
+            string inputDirName = "InputFiles";
+            string outputDirName = "OutputFiles";
+            string fullDomainUrl = $"{Request.Scheme}{Uri.SchemeDelimiter}{Request.Host.ToString()}";
 
-            if (file is null)
+            var files = Request.Form.Files.Count > 0 ? Request.Form.Files : null;
+
+            if (files is null)
             {
                 requestResponse.Detail = "File was not retrieved";
                 return Ok(requestResponse);
             }
 
-            if (!FileFormatHelper.IsPdfFile(file.FileName))
+            foreach (var file in files)
             {
-                requestResponse.Detail = "Sent file is not a pdf";
-                return Ok(requestResponse);
+                string inputFileNameTmp = $"{Guid.NewGuid()}.pdf";
+                string outputFileNameTmp = $"{Guid.NewGuid()}.pdf";
+            
+                var inputFullPath = Path.Combine(inputDirName, inputFileNameTmp);
+
+                var outputFullPath = Path.Combine(outputDirName, outputFileNameTmp);
+                var outputFullUrl = Path.Combine(fullDomainUrl, outputDirName, outputFileNameTmp);
+                
+                if (!FileFormatHelper.IsPdfFile(file.FileName))
+                {
+                    requestResponse.Detail = "Sent file is not a pdf";
+                    return Ok(requestResponse);
+                }
+            
+                file.Save(inputFullPath);
+            
+                _ocr.OcrPdfAsync(inputFullPath, outputFullPath, outputFullUrl, connectionId);
             }
             
-            file.Save(fullPath);
-            
-            _ocr.OcrPdfAsync(fullPath);
-
             requestResponse.Detail = "File was saved";
             requestResponse.Status = 200;
             
