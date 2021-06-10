@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using PdfOcr.SignalR;
@@ -16,7 +17,7 @@ namespace PdfOcr.Services
             _logger = logger;
             _hub = hub;
         }
-        public async void OcrPdfAsync(string inputFullPath, string outputFullPath, string outputFullUrl, string connectionId)
+        public async Task OcrPdfAsync(string inputFullPath, string outputFullPath, string outputFullUrl, string connectionId, string fileName)
         {
             if (connectionId is null)
             {
@@ -42,7 +43,7 @@ namespace PdfOcr.Services
             _logger?.LogInformation("Start conversion");
             proc.Start();
             await proc.WaitForExitAsync();
-            await _hub.Clients.Client(connectionId).SendAsync("broadcastmessage", outputFullUrl);
+            await _hub.Clients.Client(connectionId).SendAsync("broadcastmessage", $"{outputFullUrl}:{fileName}");
             _logger?.LogInformation("Conversion finished");
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -16,14 +17,16 @@ namespace PdfOcr.Controllers
     public class GetFile : ControllerBase
     {
         private readonly IOcr _ocr;
+        private object _locker;
 
         public GetFile(IOcr ocr)
         {
             _ocr = ocr;
+            _locker = new object();
         }
         
         [HttpPost("GetFile")]
-        public IActionResult Index(string connectionId)
+        public async Task<IActionResult> Index(string connectionId)
         {
             RequestResponse requestResponse = new RequestResponse()
             {
@@ -60,7 +63,7 @@ namespace PdfOcr.Controllers
             
                 file.Save(inputFullPath);
             
-                _ocr.OcrPdfAsync(inputFullPath, outputFullPath, outputFullUrl, connectionId);
+                await _ocr.OcrPdfAsync(inputFullPath, outputFullPath, outputFullUrl, connectionId, file.FileName);
             }
             
             requestResponse.Detail = "File was saved";

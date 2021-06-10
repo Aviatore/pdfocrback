@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace PdfOcr.Services
 {
     public interface IOcr
     {
-        void OcrPdfAsync(string inputFullPath, string outputFullPath, string outputFullUrl, string connectionId);
+        Task OcrPdfAsync(string inputFullPath, string outputFullPath, string outputFullUrl, string connectionId, string fileName);
     }
 }
