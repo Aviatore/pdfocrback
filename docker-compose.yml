@@ -1,0 +1,12 @@
+version: "3"
+services: 
+    front:
+        image: pdfocrfront
+        container_name: front
+        ports:
+            - 80:80
+    back:
+        image: pdfocrbackend
+        container_name: back
+        ports:
+            - 5001:80
