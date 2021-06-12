@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,8 @@ namespace PdfOcr.Controllers
         [HttpPost("GetFile")]
         public async Task<IActionResult> Index(string connectionId)
         {
+            FileFormatHelper.ClearDirectories();
+
             RequestResponse requestResponse = new RequestResponse()
             {
                 Detail = "Something went wrong",
