@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using PdfOcr.Extensions;
 using PdfOcr.HelperMethods;
 using PdfOcr.Models;
@@ -19,11 +20,13 @@ namespace PdfOcr.Controllers
     {
         private readonly IOcr _ocr;
         private object _locker;
+        private ILogger<GetFile> _logger;
 
-        public GetFile(IOcr ocr)
+        public GetFile(IOcr ocr, ILogger<GetFile> logger)
         {
             _ocr = ocr;
             _locker = new object();
+            _logger = logger;
         }
         
         [HttpPost("GetFile")]
@@ -65,6 +68,9 @@ namespace PdfOcr.Controllers
                 }
             
                 file.Save(inputFullPath);
+                var f = Directory.GetFiles("InputFiles");
+                var ff = String.Join(',', f);
+                _logger.LogInformation($"Files: {ff}");
             
                 await _ocr.OcrPdfAsync(inputFullPath, outputFullPath, outputFullUrl, connectionId, file.FileName);
             }

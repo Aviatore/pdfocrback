@@ -14,6 +14,7 @@ namespace PdfOcr.Services
         private readonly ILogger<Ocr> _logger;
         private readonly IHubContext<MyMessageHub> _hub;
         private Dictionary<string, Process> _processes;
+        private bool _killed;
 
         public Ocr(ILogger<Ocr> logger, IHubContext<MyMessageHub> hub)
         {
@@ -23,6 +24,7 @@ namespace PdfOcr.Services
         }
         public async Task OcrPdfAsync(string inputFullPath, string outputFullPath, string outputFullUrl, string connectionId, string fileName)
         {
+            _killed = false;
             if (connectionId is null)
             {
                 await _hub.Clients.All.SendAsync("broadcastmessage", outputFullPath);
@@ -48,18 +50,35 @@ namespace PdfOcr.Services
             _processes.Add(connectionId, proc);
             proc.Start();
             await proc.WaitForExitAsync();
-            await _hub.Clients.Client(connectionId).SendAsync("broadcastmessage", $"{outputFullUrl}:{fileName}");
+
+            if (!_killed)
+            {
+                await _hub.Clients.Client(connectionId).SendAsync("broadcastmessage", $"{outputFullUrl}:{fileName}");
+            }
+            
             _processes.Remove(connectionId);
             _logger.LogInformation($"[{DateTime.Now:HH:mm:ss}] Conversion finished");
             _logger.LogInformation($"[{DateTime.Now:HH:mm:ss}] Number of processes: {_processes.Count} running by {connectionId}");
         }
 
-        public bool KillProcess(string connectionId)
+        /*public bool KillProcess(string connectionId)
         {
             if (_processes.ContainsKey(connectionId))
             {
                 _logger.LogInformation($"[{DateTime.Now:HH:mm:ss}] Killing process of {connectionId}");
                 _processes[connectionId].Kill(true);
+            }
+
+            return true;
+        }*/
+        
+        public bool KillProcess(HubCallerContext context)
+        {
+            if (_processes.ContainsKey(context.ConnectionId))
+            {
+                _logger.LogInformation($"[{DateTime.Now:HH:mm:ss}] Killing process of {context.ConnectionId}");
+                _processes[context.ConnectionId].Kill(true);
+                _killed = true;
             }
 
             return true;

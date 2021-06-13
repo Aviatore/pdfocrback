@@ -25,7 +25,8 @@ namespace PdfOcr.SignalR
         public override Task OnDisconnectedAsync(Exception exception)
         {
             _logger.LogInformation($"Connection lost with {Context.ConnectionId}");
-            _ocr.KillProcess(Context.ConnectionId);
+            //_ocr.KillProcess(Context.ConnectionId);
+            _ocr.KillProcess(Context);
             return base.OnDisconnectedAsync(exception);
         }
 
@@ -42,7 +43,7 @@ namespace PdfOcr.SignalR
 
         public bool StopConversion()
         {
-            return _ocr.KillProcess(Context.ConnectionId);
+            return _ocr.KillProcess(Context);
         }
     }
 }
