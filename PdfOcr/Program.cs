@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PdfOcr.HelperMethods;
 
 namespace PdfOcr
 {
@@ -25,6 +26,11 @@ namespace PdfOcr
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(log =>
+                {
+                    log.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
+                    log.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

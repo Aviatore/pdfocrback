@@ -1,14 +1,12 @@
 version: "3"
 services: 
-    front:
-        image: aviatore84/pdfocrfront
-        container_name: front
+    full:
+        image: aviatore84/pdfocr
+        container_name: full
         ports:
-            - 4200:80
-        links: 
-            - back
-    back:
-        image: aviatore84/pdfocrback
-        container_name: back
-        ports:
+            - 4200:4200
             - 5000:80
+        environment: 
+            - HOST_IP=192.168.92.176
+            - MAX_FILE_SIZE=20M
+            - ASP_EXPOSED_PORT=5000

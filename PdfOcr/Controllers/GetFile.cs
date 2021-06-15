@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,13 @@ namespace PdfOcr.Controllers
             };
             string inputDirName = "InputFiles";
             string outputDirName = "OutputFiles";
-            string fullDomainUrl = $"{Request.Scheme}{Uri.SchemeDelimiter}{Request.Host.ToString()}";
+            var port = Environment.GetEnvironmentVariable("ASP_EXPOSED_PORT");
+            port ??= "5000";
+            var hostIp = Environment.GetEnvironmentVariable("HOST_IP");
+            hostIp ??= Request.Host.ToString();
+            var host = Regex.Replace(hostIp, @":\d+", String.Empty);
+
+            string fullDomainUrl = $"{Request.Scheme}{Uri.SchemeDelimiter}{host}:{port}";
 
             var files = Request.Form.Files.Count > 0 ? Request.Form.Files : null;
 

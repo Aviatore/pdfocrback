@@ -2,8 +2,12 @@
 COPY PdfOcr/bin/Release/net5.0/publish/ App/
 
 RUN apt update
-RUN apt install -y libgdiplus ocrmypdf tesseract-ocr tesseract-ocr-pol
+RUN apt install -y libgdiplus ocrmypdf tesseract-ocr tesseract-ocr-pol nginx
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY /dist/pdfOcr /usr/share/nginx/html
+COPY set_environment.sh /set_environment.sh
 
 FROM base
 WORKDIR /App
-ENTRYPOINT ["dotnet", "PdfOcr.dll"]
+ENTRYPOINT ["bash", "/set_environment.sh"]
