@@ -1,0 +1,40 @@
+@startuml
+
+participant ClientBrowser
+
+box Nginx / Angular
+participant "WebClientServer\n//reverse proxy//" as WebClientServer
+end box
+
+box Web-API / ASP .NET
+participant SignalR
+participant GetFile
+participant OCR
+end box
+
+activate ClientBrowser
+
+ClientBrowser -> WebClientServer: ws: Connect\n//host ip//
+activate WebClientServer
+WebClientServer -> SignalR: ws: Connect\n//127.0.0.1//
+deactivate WebClientServer
+activate SignalR
+
+ClientBrowser -> WebClientServer: POST: SendFile\n//host ip//
+activate WebClientServer
+WebClientServer -> GetFile: POST: SendFile\n//127.0.0.1//
+deactivate WebClientServer
+activate GetFile
+
+GetFile -> OCR: RunOCR
+activate OCR
+
+OCR --> SignalR: BroadcastMessage
+OCR --> GetFile: Return
+deactivate OCR
+deactivate GetFile
+
+SignalR --> ClientBrowser: SendURL
+
+
+@enduml
