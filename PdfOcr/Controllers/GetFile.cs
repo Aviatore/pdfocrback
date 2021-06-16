@@ -42,8 +42,9 @@ namespace PdfOcr.Controllers
             };
             string inputDirName = "InputFiles";
             string outputDirName = "OutputFiles";
-            var port = Environment.GetEnvironmentVariable("ASP_EXPOSED_PORT");
-            port ??= "5000";
+            var port = Environment.GetEnvironmentVariable("NGINX_EXPOSED_PORT");
+            //port ??= "5000";
+            port ??= "4200";
             var hostIp = Environment.GetEnvironmentVariable("HOST_IP");
             hostIp ??= Request.Host.ToString();
             var host = Regex.Replace(hostIp, @":\d+", String.Empty);

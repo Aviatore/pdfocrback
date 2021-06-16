@@ -5,8 +5,7 @@ services:
         container_name: full
         ports:
             - 4200:4200
-            - 5000:80
         environment: 
             - HOST_IP=192.168.92.176
-            - MAX_FILE_SIZE=20M
-            - ASP_EXPOSED_PORT=5000
+            - MAX_FILE_SIZE=25M
+            - NGINX_EXPOSED_PORT=4200
