@@ -14,6 +14,11 @@ end box
 
 activate ClientBrowser
 
+ClientBrowser -> WebClientServer: Request
+activate WebClientServer
+WebClientServer --> ClientBrowser: Response\n//static page//
+deactivate WebClientServer
+
 ClientBrowser -> WebClientServer: ws: Connect\n//host ip//
 activate WebClientServer
 WebClientServer -> SignalR: ws: Connect\n//127.0.0.1//
