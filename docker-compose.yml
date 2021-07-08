@@ -2,10 +2,10 @@ version: "3"
 services: 
     full:
         image: aviatore84/pdfocr
-        container_name: full
+        container_name: pdfOcr
         ports:
-            - 4200:4200
+            - 4204:4200
         environment: 
             - HOST_IP=192.168.92.176
             - MAX_FILE_SIZE=25M
-            - NGINX_EXPOSED_PORT=4200
+            - NGINX_EXPOSED_PORT=4204

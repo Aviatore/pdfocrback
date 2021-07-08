@@ -2,7 +2,13 @@ if [[ $HOST_IP != "" ]]
 then
     cd /usr/share/nginx/html
     echo "Changing localhost to $HOST_IP ..."
-    sed -i "s/localhost/$HOST_IP/g" main.js
+
+    if [[ $NGINX_EXPOSED_PORT != "" ]]
+    then
+        sed -i "s/localhost:4200/${HOST_IP}:${NGINX_EXPOSED_PORT}/g" main.js
+    else
+        sed -i "s/localhost/$HOST_IP/g" main.js
+    fi
 fi
 
 if [[ $MAX_FILE_SIZE != "" ]]

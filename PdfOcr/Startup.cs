@@ -41,10 +41,13 @@ namespace PdfOcr
             services.AddControllers();
             services.AddSignalR();
             
+            var port = Environment.GetEnvironmentVariable("NGINX_EXPOSED_PORT");
+            port ??= "4200";
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder => builder
-                    .WithOrigins("http://localhost:4200")
+                    .WithOrigins($"http://localhost:{port}")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

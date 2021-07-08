@@ -1,4 +1,5 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:5.0 As base
+EXPOSE 4200
 COPY PdfOcr/bin/Release/net5.0/publish/ App/
 
 RUN apt update
