@@ -1,0 +1,25 @@
+@startuml
+actor User
+participant WebClient
+box Web-API
+
+User -> WebClient: Open application
+activate WebClient
+WebClient -> SignalR: Connect
+activate SignalR
+
+User -> WebClient: Request (SendFile)
+WebClient -> GetFile: SendFile
+activate GetFile
+
+GetFile -> OCR: DoOCR
+activate OCR
+
+OCR --> SignalR: BroadcastMessage
+OCR --> GetFile: Return
+deactivate OCR
+
+SignalR --> WebClient: SendURL
+
+
+@enduml
